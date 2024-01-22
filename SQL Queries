@@ -1,0 +1,91 @@
+Certainly! Here's your SQL code without comments:
+
+```sql
+SELECT * FROM Customers;
+SELECT * FROM Products;
+SELECT * FROM Orders;
+SELECT * FROM [Order Details];
+
+SELECT
+    sum(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS TotalRevenues
+FROM
+    Orders o
+JOIN
+    [Order Details] od ON o.OrderID = od.OrderID
+WHERE
+    YEAR(o.OrderDate) = 1997;
+
+SELECT
+    companyName,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS Total
+FROM
+    Customers
+JOIN
+    Orders ON Customers.CustomerID = Orders.CustomerID
+JOIN
+    [Order Details] od ON od.OrderID = Orders.OrderID
+GROUP BY
+    CompanyName;
+
+SELECT
+    productName,
+    SUM(Quantity * [Order Details].UnitPrice * (1 - discount)) AS Total
+FROM
+    Products
+JOIN
+    [Order Details] ON [Order Details].ProductID = Products.ProductID
+GROUP BY
+    ProductName
+ORDER BY
+    Total DESC;
+
+SELECT
+    CompanyName,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS Total
+FROM
+    Customers
+JOIN
+    Orders ON Customers.CustomerID = Orders.CustomerID
+JOIN
+    [Order Details] od ON od.OrderID = Orders.OrderID
+WHERE
+    Country = 'UK'
+GROUP BY
+    CompanyName
+HAVING
+    SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) > 1000;
+
+SELECT
+    Customers.CustomerID,
+    CompanyName,
+    Country,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS Total,
+    SUM(CASE WHEN YEAR(o.OrderDate) = 1997 THEN od.UnitPrice * od.Quantity * (1 - od.Discount) ELSE 0 END) AS TotalAmount1997
+FROM
+    Customers
+JOIN
+    Orders o ON o.CustomerID = Customers.CustomerID
+JOIN
+    [Order Details] od ON od.OrderID = o.OrderID
+GROUP BY
+    Customers.CustomerID, CompanyName, Country
+ORDER BY
+    Total;
+
+SELECT
+    c.CustomerID,
+    c.CompanyName,
+    c.Country,
+    SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)) AS TotalAmountAllOrders,
+    SUM(CASE WHEN YEAR(o.OrderDate) = 1997 THEN od.UnitPrice * od.Quantity * (1 - od.Discount) ELSE 0 END) AS TotalAmount1997Orders
+FROM
+    Customers c
+JOIN
+    Orders o ON c.CustomerID = o.CustomerID
+JOIN
+    [Order Details] od ON o.OrderID = od.OrderID
+GROUP BY
+    c.CustomerID, c.CompanyName, c.Country
+ORDER BY
+    c.CustomerID;
+```
