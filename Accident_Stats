@@ -1,0 +1,100 @@
+-- Question 1: How many accidents have occurred in urban areas versus rural areas?
+SELECT
+    area,
+    COUNT(*) AS Count_of_accidents
+FROM
+    accident
+GROUP BY
+    area;
+
+-- Question 2: Which day of the week has the highest number of accidents?
+SELECT
+    [Day],
+    COUNT(*) AS Total_Accident
+FROM
+    accident
+GROUP BY
+    [Day]
+ORDER BY
+    Total_Accident DESC;
+
+-- Joining accident and vehicles tables
+SELECT
+    *
+FROM
+    accident
+LEFT JOIN
+    vehicles ON accident.accidentindex = vehicles.accidentindex;
+
+-- Selecting specific columns from the joined tables
+SELECT
+    accident.AccidentIndex,
+    Severity,
+    Date,
+    Day,
+    SpeedLimit,
+    LightConditions,
+    WeatherConditions,
+    RoadConditions,
+    Area,
+    VehicleType,
+    PointImpact,
+    LeftHand,
+    JourneyPurpose,
+    Propulsion,
+    Agevehicle
+FROM
+    accident
+LEFT JOIN
+    vehicles ON accident.accidentindex = vehicles.accidentindex;
+
+-- Question 3: What is the average age of vehicles involved in accidents based on their type?
+SELECT
+    VehicleType,
+    COUNT(accident.AccidentIndex) AS Total_Accident,
+    AVG(agevehicle) AS Average_Year
+FROM
+    accident
+JOIN
+    vehicles ON accident.AccidentIndex = vehicles.AccidentIndex
+WHERE
+    agevehicle IS NOT NULL
+GROUP BY
+    VehicleType
+ORDER BY
+    Total_Accident DESC;
+
+-- Question 4: Can we identify any trends in accidents based on the age of vehicles involved?
+SELECT
+    AgeGroup,
+    COUNT(AccidentIndex) AS Total_Accident,
+    AVG(agevehicle) AS Average_Year
+FROM (
+    SELECT
+        AccidentIndex,
+        agevehicle,
+        CASE
+            WHEN agevehicle BETWEEN 0 AND 5 THEN 'New'
+            WHEN agevehicle BETWEEN 6 AND 10 THEN 'Regular'
+            ELSE 'Old'
+        END AS AgeGroup
+    FROM
+        vehicles
+) AS SubQuery
+GROUP BY
+    AgeGroup;
+
+-- Question 5: Are there any specific weather conditions that contribute to severe accidents?
+DECLARE @Severity VARCHAR(100)
+SET @Severity = 'Serious'
+SELECT
+    WeatherConditions,
+    COUNT(Severity) AS Total_Accident
+FROM
+    accident
+WHERE
+    Severity = @Severity
+GROUP BY
+    WeatherConditions
+ORDER BY
+    Total_Accident DESC;
