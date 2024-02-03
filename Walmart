@@ -1,0 +1,154 @@
+-- How many unique cities does the data have?
+-- In which city is each branch?
+SELECT DISTINCT ( city ),
+                branch
+FROM   walmart 
+
+-- How many unique product lines does the data have?
+
+SELECT DISTINCT ( [product line] )
+FROM   walmart 
+
+-- What is the most common payment method?
+
+SELECT TOP 1 [payment],
+             Count([payment])
+FROM   walmart
+GROUP  BY [payment]
+ORDER  BY Count([payment]) DESC 
+
+-- What is the most selling product line?
+
+SELECT TOP 1 [product line],
+             Count([product line])
+FROM   walmart
+GROUP  BY [product line]
+ORDER  BY Count([product line]) DESC 
+
+-- What is the total revenue by month?
+
+SELECT CASE
+         WHEN Month(date) = 1 THEN 'January'
+         WHEN Month(date) = 2 THEN 'February'
+         WHEN Month(date) = 3 THEN 'March'
+         WHEN Month(date) = 4 THEN 'April'
+         WHEN Month(date) = 5 THEN 'May'
+         WHEN Month(date) = 6 THEN 'June'
+         WHEN Month(date) = 7 THEN 'July'
+         WHEN Month(date) = 8 THEN 'August'
+         WHEN Month(date) = 9 THEN 'September'
+         WHEN Month(date) = 10 THEN 'October'
+         WHEN Month(date) = 11 THEN 'November'
+         WHEN Month(date) = 12 THEN 'December'
+         ELSE 'unkown'
+       END        AS month_name,
+       Sum(total) AS total_revenue
+FROM   walmart
+GROUP  BY CASE
+            WHEN Month(date) = 1 THEN 'January'
+            WHEN Month(date) = 2 THEN 'February'
+            WHEN Month(date) = 3 THEN 'March'
+            WHEN Month(date) = 4 THEN 'April'
+            WHEN Month(date) = 5 THEN 'May'
+            WHEN Month(date) = 6 THEN 'June'
+            WHEN Month(date) = 7 THEN 'July'
+            WHEN Month(date) = 8 THEN 'August'
+            WHEN Month(date) = 9 THEN 'September'
+            WHEN Month(date) = 10 THEN 'October'
+            WHEN Month(date) = 11 THEN 'November'
+            WHEN Month(date) = 12 THEN 'December'
+            ELSE 'unkown'
+          END
+ORDER  BY total_revenue 
+
+--What month had the largest COGS?
+
+SELECT CASE
+         WHEN Month(date) = 1 THEN 'January'
+         WHEN Month(date) = 2 THEN 'February'
+         WHEN Month(date) = 3 THEN 'March'
+         WHEN Month(date) = 4 THEN 'April'
+         WHEN Month(date) = 5 THEN 'May'
+         WHEN Month(date) = 6 THEN 'June'
+         WHEN Month(date) = 7 THEN 'July'
+         WHEN Month(date) = 8 THEN 'August'
+         WHEN Month(date) = 9 THEN 'September'
+         WHEN Month(date) = 10 THEN 'October'
+         WHEN Month(date) = 11 THEN 'November'
+         WHEN Month(date) = 12 THEN 'December'
+         ELSE 'unkown'
+       END       AS month_name,
+       Sum(cogs) AS total_cogs
+FROM   walmart
+GROUP  BY CASE
+            WHEN Month(date) = 1 THEN 'January'
+            WHEN Month(date) = 2 THEN 'February'
+            WHEN Month(date) = 3 THEN 'March'
+            WHEN Month(date) = 4 THEN 'April'
+            WHEN Month(date) = 5 THEN 'May'
+            WHEN Month(date) = 6 THEN 'June'
+            WHEN Month(date) = 7 THEN 'July'
+            WHEN Month(date) = 8 THEN 'August'
+            WHEN Month(date) = 9 THEN 'September'
+            WHEN Month(date) = 10 THEN 'October'
+            WHEN Month(date) = 11 THEN 'November'
+            WHEN Month(date) = 12 THEN 'December'
+            ELSE 'unkown'
+          END
+ORDER  BY total_cogs 
+
+--What product line had the largest revenue?
+
+SELECT [product line],
+       Sum(total) AS revenue_sum
+FROM   walmart
+GROUP  BY [product line]
+ORDER  BY Sum(total) DESC 
+
+--What is the city with the largest revenue?
+
+SELECT city,
+       Sum(total)
+FROM   walmart
+GROUP  BY ( city )
+ORDER  BY Sum(total) DESC --What product line had the largest VAT?
+
+SELECT [product line],
+       Round(Avg([tax 5 %]), 2)
+FROM   walmart
+GROUP  BY [product line]
+ORDER  BY Avg([tax 5 %]) DESC 
+
+--Fetch each product line and add a column to those product line showing "Good", "Bad". Good if its greater than average sales
+
+SELECT [product line],
+       Avg(Count([product line]))
+FROM   walmart
+GROUP  BY [product line] 
+
+--Which branch sold more products than average product sold?
+
+SELECT branch,
+       Sum(quantity) AS qty
+FROM   sales
+GROUP  BY branch
+HAVING Sum(quantity) > (SELECT Avg(quantity)
+                        FROM   sales) 
+						
+--What is the most common product line by gender?
+
+SELECT gender,
+       [product line],
+       Count([gender]) AS total_count
+FROM   walmart
+GROUP  BY gender,
+          [product line]
+ORDER  BY total_count DESC 
+
+--What is the average rating of each product line?
+
+SELECT [product line],
+       Round(Avg(rating), 2)
+FROM   walmart
+GROUP  BY [product line]
+ORDER  BY ( Avg(rating) ) DESC 
